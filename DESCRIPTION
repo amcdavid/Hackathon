@@ -1,0 +1,29 @@
+Package: Hackathon
+Title: Score a data modeling competition on github
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Andrew",
+           family = "McDavid",
+           role = c("aut", "cre"),
+           email = "Andrew_McDavid@urmc.rochester.edu",
+           comment = c(ORCID = "0000-0002-6581-1213"))
+Description: 
+    A modeling competition ("Hackathon") is a contest in which teams attempt to 
+    maximize their performance on data with hidden labels by developing a
+    machine learning prediction algorithm with public training data.
+    This package polls github to download submissions, scores them and uploads a
+    readerboard.
+License: GPL (>=3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports:
+    drake,
+    knitr,
+    rmarkdown,
+    callr,
+    dplyr,
+    readr
+Suggests:
+    googlesheets4

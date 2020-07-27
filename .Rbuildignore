@@ -1,0 +1,6 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+README*
+.drake/
+Leaderboard.Rmd
+private/

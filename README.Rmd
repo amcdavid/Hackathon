@@ -1,0 +1,24 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+
+This contains the holdout data and other resources that must not be shared publicly.
+
+This also contains the code that scores submissions for the hackathon.
+
+# Contents
+
+* Results.Rmd: rmarkdown after compiling results, copy to public repo when done
+* private/: hold out data labels and team manifest.
+* R/: code
+
+
+# Colophone
+
+```{r}
+library(Hackathon)
+sessionInfo()
+```
