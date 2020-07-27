@@ -1,29 +1,33 @@
 ---
-output: github_document
+output: html_document
 ---
 
 <!-- Leaderboard.md is generated from Leaderboard.Rmd. Please edit that file -->
 
 
-```{r}
+```{r, results = 'hide', echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 library(dplyr)
 library(drake)
 library(readr)
-library(ggplot2)
+library(DT)
 ```
 
 ```{r}
-loadd(scores)
+loadd(result_table)
+loadd(config)
+result_table = rowwise(result_table) %>% 
+  mutate(score_number = ifelse(is.numeric(scores), scores, Inf), message = ifelse(is.character(scores), scores, ''))
+board = result_table %>% arrange(score_number) %>% select(pseudonym, readme_ok, score = score_number, message)
 ```
 
-# Leaderboard by score
+# Leaderboard for `r config$competition_name`
 
 ```{r}
-knitr::kable(scores %>% arrange(score))
+datatable(board)
 ```
 
-# Leaderboard by alphabetical
 
-```{r}
-knitr::kable(scores %>% arrange(pseudonym))
-```
+  * *readme_ok*: was there a README.md publicly available at github.com/`<github handle>`/`r config$competition_name` ?  (If false, then the repo hasn't been created yet or the handle is incorrect)
+  * *score*: Score of submitted predictions (lower is better).
+  * *message*: Error message if predictions couldn't be found or parsed.

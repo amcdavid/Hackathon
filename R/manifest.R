@@ -9,6 +9,7 @@ globalVariables(c('pseudonym', 'gh_handle'))
 #'
 #' @return `logical` if the manifest is OK.
 #' @export
+#'
 #' @importFrom utils write.csv
 #' @importFrom readr read_csv
 update_gs_manifest = function(gslink, competition_name){
@@ -26,8 +27,4 @@ verify_gs_manifest = function(){
   if(any(is.na(manifest$gh_handle) | nchar(manifest$gh_handle)<1)) stop('bad values for github handles')
   if(any(is.na(manifest$pseudonym) | nchar(manifest$pseudonym)<1)) stop('bad values for display pseudonyms')
   TRUE
-}
-
-get_manifest = function(file = file.path('private', 'MANIFEST.csv')){
-  read_csv(file)
 }

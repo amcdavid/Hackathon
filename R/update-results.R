@@ -1,27 +1,38 @@
+#' @describeIn eval_predictions get last-modified header 
+#' @export
+last_modified = function(url){
+  h = httr::HEAD(url)
+  h$headers[["last-modified"]]
+}
+
+
+#' @describeIn eval_predictions check for README.md
+#' @export
 has_readme = function(url){
-  tt = try(download.file(url, destfile = tempfile(), quiet = TRUE))
-  if(inherits(tt, 'try-error')) return(1) else tt
+  tt = try(ok <- download.file(url, destfile = tempfile(), quiet = TRUE))
+  if(inherits(tt, 'try-error')) return(FALSE) else return(ok==0)
 }
 
 
 parse_predictions = readr::read_csv
 
-#' Download predictions
+#' Download and evaluate prediction
 #'
 #' @param url url to prediction file
+#' @param target vector of truth
 #'
 #' @return parsed predictions
 #' @export
 #'
-#' @examples
-#' download_predictions('https://raw.githubusercontent.com/Rochester-Biomedical-DS/Hackathon-Summer-2020/master/prediction/prediction.csv')
 #' @importFrom utils download.file
-download_predictions = function(url){
+eval_predictions = function(url, target){
   dest = tempfile()
   tt = try(download.file(url, destfile = dest, quiet = TRUE))
   if(inherits(tt, 'try-error')) return(as.character(tt))
   tt = try(parse_predictions(dest))
-  if(inherits(tt, 'try-error')) return("Bad prediction format.")
+  if(inherits(tt, 'try-error')) return("Couldn't load prediction csv.")
+  tt = try(calculate_mse(tt, target))
+  if(inherits(tt, 'try-error')) return("Bad format in predictions.")
   return(tt)
 }
 
@@ -40,8 +51,16 @@ rmarkdown = function(input, output_file, ...){
   )
 }
 
+# rmarkdown = function(input, output_file, ...){
+#   callr::r(rmarkdown::render(input, output_file = output_file, ...))
+# }
+
+
+#rmarkdown = rmarkdown::render
+
 update_public = function(board, path){
-  board_files = paste0(gsub('.md$', '', board), '_files/', collapse = '')
-  board_and_files = c(board, list.files(pattern = board_files))
-  file.copy(board_and_files, path, recursive = TRUE, copy.date = TRUE)
+  #board_files = paste0(gsub('.md$', '', board), '_files/', collapse = '')
+  #board_and_files = c(board, list.files(pattern = board_files))
+  system2(system.file('sh', 'update_parent_repo.sh', package = 'Hackathon'), args = path)
+  #file.copy(board_and_files, path, recursive = TRUE, copy.date = TRUE)
 }

@@ -11,10 +11,25 @@ This also contains the code that scores submissions for the hackathon.
 
 # Contents
 
-* Results.Rmd: rmarkdown after compiling results, copy to public repo when done
+* Leaderboard.Rmd: rmarkdown after compiling results, copy to public repo when done
 * private/: hold out data labels and team manifest.
 * R/: code
 
+# Use
+
+```r
+source('drake/drake-plan.R')
+make(plan)
+```
+
+This sets up a drake workflow to poll all repos in 
+`private/MANIFEST.csv`, score them, write Leaderboard.html,
+and copy to the parent repo.
+
+# Todo
+
+  * Track project-specific using a yaml or otherwise configuration file rather than global variables in drake-plan.R.
+  * Add a function to initialize a Hackathon private directory, copying down the drake workflow.
 
 # Colophone
 

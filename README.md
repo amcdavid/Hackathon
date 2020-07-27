@@ -8,11 +8,28 @@ This also contains the code that scores submissions for the hackathon.
 
 # Contents
 
-  - Teams-Manifest.csv: list of teams used to poll git repos
-  - Results.Rmd: rmarkdown after compiling results, copy to public repo
-    when done
+  - Leaderboard.Rmd: rmarkdown after compiling results, copy to public
+    repo when done
+  - private/: hold out data labels and team manifest.
   - R/: code
-  - private\_data/: hold out data labels
+
+# Use
+
+``` r
+source('drake/drake-plan.R')
+make(plan)
+```
+
+This sets up a drake workflow to poll all repos in
+`private/MANIFEST.csv`, score them, write Leaderboard.html, and copy to
+the parent repo.
+
+# Todo
+
+  - Track project-specific using a yaml or otherwise configuration file
+    rather than global variables in drake-plan.R.
+  - Add a function to initialize a Hackathon private directory, copying
+    down the drake workflow.
 
 # Colophone
 
@@ -39,7 +56,9 @@ sessionInfo()
     ## [1] Hackathon_0.0.0.9000
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] compiler_4.0.0  magrittr_1.5    tools_4.0.0     htmltools_0.5.0
-    ##  [5] yaml_2.2.1      stringi_1.4.6   rmarkdown_2.3   knitr_1.29     
-    ##  [9] stringr_1.4.0   xfun_0.15       digest_0.6.25   rlang_0.4.7    
-    ## [13] evaluate_0.14
+    ##  [1] Rcpp_1.0.5      crayon_1.3.4    digest_0.6.25   R6_2.4.1       
+    ##  [5] lifecycle_0.2.0 magrittr_1.5    evaluate_0.14   pillar_1.4.6   
+    ##  [9] rlang_0.4.7     stringi_1.4.6   ellipsis_0.3.1  vctrs_0.3.2    
+    ## [13] rmarkdown_2.3   tools_4.0.0     stringr_1.4.0   readr_1.3.1    
+    ## [17] hms_0.5.3       xfun_0.16       yaml_2.2.1      compiler_4.0.0 
+    ## [21] pkgconfig_2.0.3 htmltools_0.5.0 knitr_1.29      tibble_3.0.3
