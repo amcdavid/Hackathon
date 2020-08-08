@@ -30,17 +30,20 @@ eval_predictions = function(url, target){
   tt = try(download.file(url, destfile = dest, quiet = TRUE))
   if(inherits(tt, 'try-error')) return(as.character(tt))
   tt = try(parse_predictions(dest))
-  if(inherits(tt, 'try-error')) return("Couldn't load prediction csv.")
+  if(inherits(tt, 'try-error')) return(sprintf("Couldn't load prediction csv: %s", as.character(tt)))
   tt = try(calculate_mse(tt, target))
-  if(inherits(tt, 'try-error')) return("Bad format in predictions.")
+  if(inherits(tt, 'try-error')) return(sprintf("Bad format in predictions: %s", as.character(tt)))
   return(tt)
 }
 
 
 calculate_mse = function(prediction, target){
-  if(!inherits(prediction, 'data.frame')) return(NA_real_)
+  if(!inherits(prediction, 'data.frame')) stop('Bad format in predictions')
   x = prediction[[1]]
-  mean((x-target)^2)
+  if(length(x) != length(target)) stop("Wrong length for predictions")
+  val = mean((x-target)^2)
+  if(is.na(val)) stop("Non numeric values in predictions")
+  val
 }
 
 rmarkdown = function(input, output_file, ...){
