@@ -28,6 +28,7 @@ datatable(board)
 ```
 
 
-  * *readme_ok*: was there a README.md publicly available at github.com/`<github handle>`/`r config$competition_name` ?  (If false, then the repo hasn't been created yet or the handle is incorrect)
-  * *score*: Score of submitted predictions (lower is better).
-  * *message*: Error message if predictions couldn't be found or parsed.
+  * **readme_ok**: was there a README.md publicly available at github.com/`<github handle>`/`r config$competition_name` ?  (If false, then the repo hasn't been created yet or the handle is incorrect)
+  * **score**: Score of submitted predictions (lower is better).
+  * **message**: Error message if predictions couldn't be found or parsed.
+  * If your team isn't included at all here, we may not have your github handle yet, or there may be an issue with your registration.  Please open an issue or email the organizers.

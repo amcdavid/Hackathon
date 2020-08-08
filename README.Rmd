@@ -17,9 +17,11 @@ This also contains the code that scores submissions for the hackathon.
 
 # Use
 
+From the Hackathon working directory, run
+
 ```r
 source('drake/drake-plan.R')
-make(plan)
+make(plan, prework = 'devtools::load_all()')
 ```
 
 This sets up a drake workflow to poll all repos in 
