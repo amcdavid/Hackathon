@@ -1,5 +1,7 @@
 globalVariables(c('pseudonym', 'gh_handle'))
 
+not_a_string = function(x) is.na(x) | !is.character(x) | nchar(x) < 1
+
 #' Downlaod a manifest from googlesheets, add urls and save
 #'
 #' @param gslink link to googlesheet.  
@@ -12,10 +14,8 @@ globalVariables(c('pseudonym', 'gh_handle'))
 #'
 #' @importFrom utils write.csv
 #' @importFrom readr read_csv
-update_gs_manifest = function(gslink, competition_name){
-  sheet = googlesheets4::read_sheet(gslink)
-  subsheet =  dplyr::select(sheet, gh_handle = 'Your github handle',pseudonym = 'Display pseudonym for rankings', email = 'Email Address')
-  subsheet = dplyr::mutate(subsheet, pseudonym = ifelse(nchar(pseudonym)<1, gh_handle, pseudonym))
+update_gs_manifest = function(subsheet, competition_name){
+  subsheet = dplyr::mutate(subsheet, pseudonym = ifelse(not_a_string(pseudonym), gh_handle, pseudonym))
   subsheet = dplyr::mutate(subsheet,  readme_url = sprintf('https://raw.githubusercontent.com/%s/%s/master/README.md', gh_handle, competition_name),
          prediction_url = sprintf('https://raw.githubusercontent.com/%s/%s/master/prediction/prediction.csv', gh_handle, competition_name))
   write.csv(subsheet, file.path('private', 'MANIFEST.csv'), row.names = FALSE)
@@ -24,7 +24,7 @@ update_gs_manifest = function(gslink, competition_name){
 
 verify_gs_manifest = function(){
   manifest = read_csv(file.path('private', 'MANIFEST.csv'))
-  if(any(is.na(manifest$gh_handle) | nchar(manifest$gh_handle)<1)) stop('bad values for github handles')
-  if(any(is.na(manifest$pseudonym) | nchar(manifest$pseudonym)<1)) stop('bad values for display pseudonyms')
+  if(any(not_a_string(manifest$gh_handle))) stop('bad values for github handles')
+  if(any(not_a_string(manifest$pseudonym))) stop('bad values for display pseudonyms')
   TRUE
 }

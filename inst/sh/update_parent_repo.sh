@@ -9,4 +9,7 @@ parent="$1"
 #branch=$(cd $parent && git branch)
 pages=$(cd "$parent" && git checkout gh-pages)
 cp Leaderboard.html "$parent"
+# commit and push
 cd "$parent" && git add Leaderboard.html && git commit -m 'update leaderboard' && git push origin gh-pages && git co master
+# commit but don't push
+# cd "$parent" && git add Leaderboard.html && git commit -m 'update leaderboard' && git co master

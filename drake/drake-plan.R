@@ -1,11 +1,22 @@
 library(drake)
 library(dplyr)
-gs_sheet = "https://docs.google.com/spreadsheets/d/1mK5UgNIRrdSxVyb3L9MfD59XzR0Q0MQfyCpvccuiPZI/edit#gid=2103763262"
+# direct survey results
+# gs_sheet = "https://docs.google.com/spreadsheets/d/1mK5UgNIRrdSxVyb3L9MfD59XzR0Q0MQfyCpvccuiPZI/edit#gid=2103763262"
+# Amanda's manually annotated sheet
+gs_sheet = "https://docs.google.com/spreadsheets/d/1IqExTcI1qWg6UVMKstP6QELgtvEeHfqo4WgJrZP0qQo/edit#gid=0"
 competition_name = 'Hackathon-Summer-2020'
 public_repo_path = file.path('../', competition_name)
 
 # download fresh copy
-# update_gs_manifest(gs_sheet,competition_name)
+update_manifest = FALSE
+if(update_manifest){
+  sheet = googlesheets4::read_sheet(gs_sheet)
+  subsheet =  sheet %>% dplyr::filter(Valid == TRUE) %>% dplyr::select(gh_handle = 'Github handle', pseudonym, email = 'Captain e-mail') 
+  update_gs_manifest(subsheet,competition_name)
+}
+# 
+# 
+
 manifest_file = file.path('private', 'MANIFEST.csv')
 
 # truth
