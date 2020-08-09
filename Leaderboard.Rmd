@@ -32,3 +32,5 @@ datatable(board)
   * **score**: Score of submitted predictions (lower is better).
   * **message**: Error message if predictions couldn't be found or parsed.
   * If your team isn't included at all here, we may not have your github handle yet, or there may be an issue with your registration.  Please open an issue or email the organizers.
+  
+Last update `r Sys.time()`
