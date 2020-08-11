@@ -13,6 +13,10 @@ has_readme = function(url){
   if(inherits(tt, 'try-error')) return(FALSE) else return(ok==0)
 }
 
+my_error = function(x){
+  class(x) = 'my_error'
+  return(x)
+}
 
 parse_predictions = readr::read_csv
 
@@ -25,25 +29,34 @@ parse_predictions = readr::read_csv
 #' @export
 #'
 #' @importFrom utils download.file
-eval_predictions = function(url, target){
+collect_predictions = function(url){
   dest = tempfile()
   tt = try(download.file(url, destfile = dest, quiet = TRUE))
-  if(inherits(tt, 'try-error')) return(as.character(tt))
+  if(inherits(tt, 'try-error')) return(my_error(as.character(tt)))
   tt = try(parse_predictions(dest))
-  if(inherits(tt, 'try-error')) return(sprintf("Couldn't load prediction csv: %s", as.character(tt)))
-  tt = try(calculate_mse(tt, target))
-  if(inherits(tt, 'try-error')) return(sprintf("Bad format in predictions: %s", as.character(tt)))
+  if(inherits(tt, 'try-error')) return(my_error(sprintf("Couldn't load prediction csv: %s", as.character(tt))))
   return(tt)
 }
 
-
-calculate_mse = function(prediction, target){
-  if(!inherits(prediction, 'data.frame')) stop('Bad format in predictions')
-  x = prediction[[1]]
-  if(length(x) != length(target)) stop("Wrong length for predictions")
-  val = mean((x-target)^2)
-  if(is.na(val)) stop("Non numeric values in predictions")
-  val
+#' @describeIn collect_predictions calculate MSE and run a bootstrap
+calculate_mse = function(prediction, target, bootstrap_indices){
+  if(!inherits(prediction, 'my_error')){
+    tt = try({
+      if(inherits(prediction, 'my_error')) stop(prediction)
+      if(!inherits(prediction, 'data.frame')) stop('Bad format in predictions')
+      px = prediction[[1]]
+      if(length(px) != length(target)) stop("Wrong length for predictions")
+      mse = function(x, target) mean((x - target)^2)
+      val = mse(px, target)
+      if(is.na(val)) stop("Non numeric values in predictions")
+      boot_t = as.matrix(purrr::map_dbl(bootstrap_indices, function(i) mse(px[i], target[i])))
+      boot_obj = list(t0 = val, t = boot_t, R = length(bootstrap_indices))
+      ci = boot::boot.ci(boot_obj, type = 'perc', conf = .8)
+    })
+  }
+ 
+  if(inherits(prediction, 'my_error') || inherits(tt, 'try-error')) return(tibble(val = Inf, '10%' = Inf, '90%' = Inf, message = as.character(tt)))
+  tibble(val = val, '10%' = ci$percent[4], '90%' = ci$percent[5], message = 'OK')
 }
 
 rmarkdown = function(input, output_file, ...){

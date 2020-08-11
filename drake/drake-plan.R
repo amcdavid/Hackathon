@@ -6,6 +6,7 @@ library(dplyr)
 gs_sheet = "https://docs.google.com/spreadsheets/d/1IqExTcI1qWg6UVMKstP6QELgtvEeHfqo4WgJrZP0qQo/edit#gid=0"
 competition_name = 'Hackathon-Summer-2020'
 public_repo_path = file.path('../', competition_name)
+boot_replicates = 500
 
 # download fresh copy
 update_manifest = FALSE
@@ -30,8 +31,9 @@ manifest = readr::read_csv(manifest_file)
 plan = drake_plan(
     config = target(list(competition_name = competition_name, manifest = manifest, public_repo_path = public_repo_path)),
     readme_ok = target(has_readme(readme_url), transform= map(.data = !!manifest, .id =  gh_handle), trigger = trigger(change = last_modified(readme_url))),
-    #readmes = target(c(readme_ok), transform = combine(readme_ok)),
-    scores = target(eval_predictions(prediction_url, truth), transform = map(.data = !!manifest, .id =  gh_handle), trigger = trigger(change = last_modified(prediction_url))),
+    bootstrap_indices = target(replicate(boot_replicates, sample(length(truth), replace = TRUE), simplify = FALSE)),
+    predictions = target(collect_predictions(prediction_url), transform = map(.data = !!manifest, .id =  gh_handle), trigger = trigger(change = last_modified(prediction_url))),
+    scores = target(calculate_mse(predictions, truth, bootstrap_indices), transform = map(predictions)),
     result_table = target(bind_cols(manifest, tibble(readme_ok = c(readme_ok), scores = list(scores))), transform = combine(readme_ok, scores)),
     # might need to `combine` these
     leaderboard = Hackathon:::rmarkdown(

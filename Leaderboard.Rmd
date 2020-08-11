@@ -8,6 +8,7 @@ output: html_document
 ```{r, results = 'hide', echo = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(dplyr)
+library(ggplot2)
 library(drake)
 library(readr)
 library(DT)
@@ -16,21 +17,30 @@ library(DT)
 ```{r}
 loadd(result_table)
 loadd(config)
-result_table = rowwise(result_table) %>% 
-  mutate(score_number = ifelse(is.numeric(scores), scores, Inf), message = ifelse(is.character(scores), scores, ''))
-board = result_table %>% arrange(score_number) %>% select(pseudonym, readme_ok, score = score_number, message)
+result_table = tidyr::unnest(result_table, cols = c(scores))
+board = result_table %>% arrange(val) %>% select(pseudonym, readme_ok, score = val, `10%`:message)
 ```
 
 # Leaderboard for `r config$competition_name`
 
 ```{r}
-datatable(board)
+datatable(board) %>% formatSignif(3:5, digits = 3)
 ```
 
 
   * **readme_ok**: was there a README.md publicly available at github.com/`<github handle>`/`r config$competition_name` ?  (If false, then the repo hasn't been created yet or the handle is incorrect)
-  * **score**: Score of submitted predictions (lower is better).
+  * **score**: MSE of submitted predictions (lower is better).
+  * **10%**: Lower confidence interval of MSE
+  * **90%**: Upper confidence interval of MSE.
   * **message**: Error message if predictions couldn't be found or parsed.
   * If your team isn't included at all here, we may not have your github handle yet, or there may be an issue with your registration.  Please open an issue or email the organizers.
+
+***
+
+```{r}
+ggplot(dplyr::filter(board, is.finite(score)) %>% mutate(pseudonym = forcats::fct_reorder(pseudonym, score)), aes(x = pseudonym, y= score, ymin = `10%`, ymax = `90%`)) + geom_crossbar() + theme_minimal() + theme(axis.text.x = element_text(angle = 90)) + ylab("MSE")
+```
+
+***
   
 Last update `r Sys.time()`
