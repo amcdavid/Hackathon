@@ -30,9 +30,9 @@ manifest = readr::read_csv(manifest_file)
 
 plan = drake_plan(
     config = target(list(competition_name = competition_name, manifest = manifest, public_repo_path = public_repo_path)),
-    readme_ok = target(has_readme(readme_url), transform= map(.data = !!manifest, .id =  gh_handle), trigger = trigger(change = last_modified(readme_url))),
+    readme_ok = target(has_readme(readme_url), transform= map(.data = !!manifest, .id =  gh_handle), trigger = trigger(condition = TRUE)),
     bootstrap_indices = target(replicate(boot_replicates, sample(length(truth), replace = TRUE), simplify = FALSE)),
-    predictions = target(collect_predictions(prediction_url), transform = map(.data = !!manifest, .id =  gh_handle), trigger = trigger(change = last_modified(prediction_url))),
+    predictions = target(collect_predictions(prediction_url), transform = map(.data = !!manifest, .id =  gh_handle), trigger = trigger(condition = TRUE)),
     scores = target(calculate_mse(predictions, truth, bootstrap_indices), transform = map(predictions)),
     result_table = target(bind_cols(manifest, tibble(readme_ok = c(readme_ok), scores = list(scores))), transform = combine(readme_ok, scores)),
     # might need to `combine` these
