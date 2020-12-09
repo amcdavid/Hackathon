@@ -1,0 +1,38 @@
+---
+output: html_document
+---
+
+<!-- Leaderboard.md is generated from Leaderboard.Rmd. Please edit that file -->
+
+
+```{r, results = 'hide', echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(DT)
+```
+
+```{r}
+board = result_table %>% arrange(auc) %>% select(dataset, contestant, extra, auc, accuracy, load_errors, score_errors)
+```
+
+# Leaderboard for `r hack$parms$name`
+
+```{r}
+datatable(board) %>% formatSignif(4:5, digits = 3)
+```
+
+
+  * **auc**: Area under ROC.  It is assumed that higher values of is_illness in predictions correspond to higher confidence of is_illness.
+  * **accuracy**: L01 accuracy (using cutpoint of .5 in is_illness prediction).
+
+***
+
+```{r}
+ggplot(board %>% mutate(pseudonym = forcats::fct_reorder(contestant, auc)), aes(x = contestant, y= auc)) +geom_point() + theme_minimal() + theme(axis.text.x = element_text(angle = 90)) + ylab("AUC") + facet_wrap(~dataset)
+```
+
+***
+  
+Last update `r Sys.time()`

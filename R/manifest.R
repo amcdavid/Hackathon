@@ -1,6 +1,5 @@
 globalVariables(c('pseudonym', 'gh_handle'))
 
-not_a_string = function(x) is.na(x) | !is.character(x) | nchar(x) < 1
 
 #' Downlaod a manifest from googlesheets, add urls and save
 #'
