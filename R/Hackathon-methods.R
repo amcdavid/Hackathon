@@ -44,7 +44,7 @@ score_mse = function(prediction, truth){
 score_hack = function(hack, get_prediction_by_manifest = get_local_or_remote_csv, score_prediction, truth = hack[['truth']], ...){
   stopifnot(inherits(hack, 'Hackathon'))
   valid_comp_tbl(hack)
-  tbl = hack[['competitor_tbl']]
+  tbl = ungroup(hack[['competitor_tbl']]) %>% mutate(seq_id = as.character(seq_len(nrow(.))))
   
   safe_get = purrr::safely(get_prediction_by_manifest, tibble())
   safe_score = purrr::safely(score_prediction, tibble())
@@ -60,7 +60,12 @@ score_hack = function(hack, get_prediction_by_manifest = get_local_or_remote_csv
     score_errors[i] = if(is.null(s$error)) 'Score OK' else as.character(s$error)
     score[[i]] = s$result
   }
-  out = bind_rows(score) %>% bind_cols(tbl)
+  names(score) = seq_along(score)
+  if( length(score) > 0 ){
+  out = left_join(tbl, bind_rows(score, .id = 'seq_id'), by = 'seq_id')
+  } else{
+    out = tibble()
+  }
   bind_cols(out, tibble(load_errors, score_errors))
 }
 
