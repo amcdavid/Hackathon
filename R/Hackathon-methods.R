@@ -94,7 +94,6 @@ score_hack = function(hack, get_prediction_by_manifest = get_local_or_remote_csv
     score[[i]] = s$result
   }
   names(score) = seq_along(score)
-  browser()
   if( length(score) > 0 ){
   out = left_join(tbl, bind_rows(score, .id = 'seq_id'), by = 'seq_id')
   } else{
