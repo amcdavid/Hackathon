@@ -21,12 +21,19 @@ library(Hackathon)
 # Initialize private repo
 
 ```{r}
-h = setup_hack('Example-Hackathon', name = 'Example', desc = 'Predicting iris species')
+h = setup_hack('.', 'Example-Hackathon', name = 'Example', desc = 'Predicting iris species')
 ```
 
 # Collect data
 
-Good hackathon data should be something novel enough that it can't be easily googled.
+Good hackathon data:
+  1.  Can't be easily googled,
+  2.  Is from a real-world scientific or business problem,
+  3.  Contains enough observations that sufficient data can be held-out for model scoring,
+  4.  Contains enough signal that it's not hopeless,
+  5.  But not so much signal that it's trivial.
+  
+Note that often items 2, 3 and 4 are in conflict with each other!
 
 ```{r}
 data(iris)
@@ -41,6 +48,23 @@ data(iris)
 
 # Initialize public repo
 
-# Load and update team manifests
+## Load and update team manifests
 
-# Score
+Needs a `contestant` field. Url is generated from gh_handle in this case.
+```{r}
+sheet = googlesheets4::read_sheet('sheet')  %>% dplyr::rename(contestant = `Display pseudonym for rankings`, gh_handle = `Your github handle`)
+```
+
+Write manifest to version-controlled file (could be made optional?)
+The file ultimately needs a `contestant` and `prediction_url` field.
+```{r}
+update_gs_manifest(sheet, hack = h)
+```
+
+Returns `TRUE` or with warnings.
+
+## Score
+```{r}
+truth = readRDS('private/test_LABELS.rds') %>% as.data.frame()
+h = load_hack('.', truth = truth)
+```
