@@ -4,14 +4,14 @@
 \alias{update_gs_manifest}
 \title{Downlaod a manifest from googlesheets, add urls and save}
 \usage{
-update_gs_manifest(subsheet, competition_name)
+update_gs_manifest(sheet, hack)
 }
 \arguments{
-\item{competition_name}{the name of the competition.
-We will look for a repos with this name under the registered github handles.}
+\item{sheet}{\code{data.frame} containing team registration info}
 
-\item{gslink}{link to googlesheet.
-You may need to authorize the googlesheets4 API or ortherwise get an API key}
+\item{hack}{\code{Hackathon} used to determine github repository}
+
+\item{repo_name}{\code{character} or a character}
 }
 \value{
 \code{logical} if the manifest is OK.

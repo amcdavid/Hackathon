@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 .drake
-.Renviron
+.Renviron*
 *.Rproj
 private/MANIFEST.csv
 Leaderboard.html
