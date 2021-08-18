@@ -1,0 +1,46 @@
+---
+title: "Quickstart guide to initializing a Hackathon"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{quickstart}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(Hackathon)
+```
+
+# Initialize private repo
+
+```{r}
+h = setup_hack('Example-Hackathon', name = 'Example', desc = 'Predicting iris species')
+```
+
+# Collect data
+
+Good hackathon data should be something novel enough that it can't be easily googled.
+
+```{r}
+data(iris)
+```
+
+## Split public / private data
+
+
+## Check that there is at least some predictive skill
+
+
+
+# Initialize public repo
+
+# Load and update team manifests
+
+# Score

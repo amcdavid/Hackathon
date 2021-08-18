@@ -4,18 +4,21 @@
 \alias{Hackathon}
 \title{Construct a Hackathon object}
 \usage{
-Hackathon(parms, competitor_tbl)
+Hackathon(parms, competitor_tbl, truth)
 }
 \arguments{
 \item{parms}{list of parameters for the hackathon}
 
 \item{competitor_tbl}{data.frame/tibble of competitors}
+
+\item{truth}{data.frame/tibble of secret truth data}
 }
 \value{
 S3 object
 }
 \description{
-This encapulates a directory structure containing configuration and private data.
+Note: you probably will want to initialize a Hackthon using \code{\link[=setup_hack]{setup_hack()}}.
+This encapsulates a directory structure containing configuration and private data.
 Various methods support scoring and updating the Hackathon.
 }
 \seealso{

@@ -1,6 +1,7 @@
 #' Construct a Hackathon object
 #'
-#' This encapulates a directory structure containing configuration and private data.
+#' Note: you probably will want to initialize a Hackthon using [setup_hack()].
+#' This encapsulates a directory structure containing configuration and private data.
 #' Various methods support scoring and updating the Hackathon.
 #' 
 #' @param parms list of parameters for the hackathon
@@ -29,16 +30,16 @@ Hackathon = function(parms, competitor_tbl, truth) {
   obj
 }
 
-req_comp_tbl_fields = c('url', 'contestant') 
+req_comp_tbl_fields = c('prediction_url', 'contestant') 
 not_a_string = function(x) is.na(x) | !is.character(x) | nchar(x) < 1
 
 valid_comp_tbl = function(obj){
   if(!inherits(tbl <- obj[['competitor_tbl']], 'data.frame')) stop("`competition_tbl` must inherit from data.frame")
   if(length(omitted <- setdiff(req_comp_tbl_fields,  names(tbl))) > 0) 
-    stop("Fields ", paste0(omitted, collapse = ', '), ' were not found in `competition_tbl`.')
+    stop("Fields ", comma_sep(omitted), ' were not found in `competition_tbl`.')
   for(f in req_comp_tbl_fields){
     if(any(bad <- not_a_string(tbl[[f]]))){
-      stop("Illegal values in rows ", paste0(head(which(bad)), collapse = ', '), ' of `', f, '` .')
+      warning("Illegal values in rows ", comma_sep(head(which(bad))), ' of `', f, '` .')
     }
   }
   
