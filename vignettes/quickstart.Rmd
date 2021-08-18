@@ -1,5 +1,5 @@
 ---
-title: "Quickstart guide to initializing a Hackathon"
+title: "Quickstart to running a modeling competition using Hackathon"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{quickstart}
@@ -18,23 +18,29 @@ knitr::opts_chunk$set(
 library(Hackathon)
 ```
 
-# Initialize private repo
+# Initialize the private directory for the Hackathon
 
 ```{r}
 h = setup_hack('.', 'Example-Hackathon', name = 'Example', desc = 'Predicting iris species')
 ```
 
-# Collect data
+This creates a directory "Example-Hackathon" under the current working directory and sets some properties in a .yml file.  These properties are used in some templates.
 
-Good hackathon data:
-  1.  Can't be easily googled,
+Note:
+It probably makes more sense to organize this only have one directory, which contains both the public and private repos?
+
+# Collect data and process data
+
+The best hackathon data:
+  1.  Can't be googled to determine the target labels.  Some amount of obfuscation or jittering of values can useful to aid with this.
   2.  Is from a real-world scientific or business problem,
-  3.  Contains enough observations that sufficient data can be held-out for model scoring,
+  3.  Contains enough observations that sufficient data can be held-out.  More data is needed for this than you'd like, if you want the final rankings to reflect team skill rather than just sampling variability in the test set. Generating confidence intervals on the score (eg with a bootstrap or parametrically) can help diagnose if enough data was held out.  This is only useful in retrospect.
   4.  Contains enough signal that it's not hopeless,
   5.  But not so much signal that it's trivial.
   
-Note that often items 2, 3 and 4 are in conflict with each other!
+Unfortunately, items 2, 3 and 4 are often in conflict with each other!
 
+Here, for lack of a better option, we'll use Fisher's Iris data:
 ```{r}
 data(iris)
 ```
@@ -56,7 +62,7 @@ sheet = googlesheets4::read_sheet('sheet')  %>% dplyr::rename(contestant = `Disp
 ```
 
 Write manifest to version-controlled file (could be made optional?)
-The file ultimately needs a `contestant` and `prediction_url` field.
+The file ultimately needs a `contestant` and `prediction_url` field.  The predictions can be either local files or remote URLs.  Ideally, we will find a way to support private predictions.
 ```{r}
 update_gs_manifest(sheet, hack = h)
 ```
@@ -64,6 +70,8 @@ update_gs_manifest(sheet, hack = h)
 Returns `TRUE` or with warnings.
 
 ## Score
+
+Scoring is done manually and posted as static html.  Ideally, we'd like a way to do this dynamically.
 ```{r}
 truth = readRDS('private/test_LABELS.rds') %>% as.data.frame()
 h = load_hack('.', truth = truth)
