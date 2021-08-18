@@ -38,13 +38,22 @@ collect_predictions = function(url){
   return(tt)
 }
 
+interpolate_boot = function(sample_prop, indices, R){
+  n = length(indices)
+  sample_prop = min(max(0, sample_prop), 1)
+  boot_prop = 1 - sample_prop
+  purrr::map(as.list(seq_len(R)), function(ii){
+  boot_i = sample(indices, size = floor(n*boot_prop), replace = TRUE)
+  sample_i = sample(setdiff(indices, boot_i), size = floor(n*sample_prop), replace = FALSE)
+  index = c(boot_i, sample_i)
+  })
+}
+
 #' @describeIn collect_predictions calculate MSE and run a bootstrap
-calculate_mse = function(prediction, target, bootstrap_indices){
-  if(!inherits(prediction, 'my_error')){
-    tt = try({
-      if(inherits(prediction, 'my_error')) stop(prediction)
+calculate_mse = function(prediction, truth, bootstrap_indices){
       if(!inherits(prediction, 'data.frame')) stop('Bad format in predictions')
       px = prediction[[1]]
+      target = truth[[1]]
       if(length(px) != length(target)) stop("Wrong length for predictions")
       mse = function(x, target) mean((x - target)^2)
       val = mse(px, target)
@@ -52,11 +61,10 @@ calculate_mse = function(prediction, target, bootstrap_indices){
       boot_t = as.matrix(purrr::map_dbl(bootstrap_indices, function(i) mse(px[i], target[i])))
       boot_obj = list(t0 = val, t = boot_t, R = length(bootstrap_indices))
       ci = boot::boot.ci(boot_obj, type = 'perc', conf = .8)
-    })
-  }
+    #})
  
-  if(inherits(prediction, 'my_error') || inherits(tt, 'try-error')) return(tibble(val = Inf, '10%' = Inf, '90%' = Inf, message = as.character(tt)))
-  tibble(val = val, '10%' = ci$percent[4], '90%' = ci$percent[5], message = 'OK')
+  #if(inherits(tt, 'try-error')) return(tibble(val = Inf, '10%' = Inf, '90%' = Inf, message = as.character(tt)))
+  tibble(val = val, '10%' = ci$percent[4], '90%' = ci$percent[5])
 }
 
 rmarkdown = function(input, output_file, ...){
