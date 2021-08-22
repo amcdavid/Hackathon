@@ -7,7 +7,7 @@
 \usage{
 collect_predictions(url)
 
-calculate_mse(prediction, target, bootstrap_indices)
+calculate_mse(prediction, truth, bootstrap_indices)
 }
 \arguments{
 \item{url}{url to prediction file}

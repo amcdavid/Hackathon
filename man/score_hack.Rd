@@ -17,7 +17,7 @@ score_hack(
 
 \item{get_prediction_by_manifest}{a function operating on a row of the manifest, returning an object that will be scored by \code{score_prediction}}
 
-\item{score_prediction}{a function operating on a loaded prediction and \code{truth}.}
+\item{score_prediction}{a function operating on a loaded prediction and \code{truth}.  Returns a \code{data.frame}.}
 
 \item{truth}{}
 
