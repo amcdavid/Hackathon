@@ -16,7 +16,7 @@ comma_sep = function(vec) paste(vec, collapse = ', ')
 #' @importFrom readr read_csv
 update_gs_manifest = function(sheet, hack){
   sheet = dplyr::mutate(sheet, pseudonym = ifelse(not_a_string(contestant), gh_handle, contestant))
-  if(!missing(hack) && inherits(h, 'Hackathon')){
+  if(!missing(hack) && inherits(hack, 'Hackathon')){
     repo_name = hack$parms$name
   } else{
     if(!(is.character(repo_name) && length(repo_name) == 1)) stop('`repo_name` must be length 1 `character` or provide a Hackthon `hack`.')
