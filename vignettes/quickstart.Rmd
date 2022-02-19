@@ -21,7 +21,7 @@ library(Hackathon)
 # Initialize the private directory for the Hackathon
 
 ```{r}
-h = setup_hack('.', 'Example-Hackathon', name = 'Example', desc = 'Predicting iris species')
+h = setup_hack('.', name = 'Example-Hackathon', desc = 'Predicting iris species')
 ```
 
 This creates a directory "Example-Hackathon" under the current working directory and sets some properties in a .yml file.  These properties are used in some templates.

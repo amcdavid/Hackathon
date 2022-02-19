@@ -4,34 +4,19 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# "Hackathon" predictive modeling competitions on github
 
-This contains the holdout data and other resources that must not be shared publicly.
 
-This also contains the code that scores submissions for the hackathon.
+By a "Hackathon" I mean a lightweight kaggle-style predictive modeling competition, e.g. for class projects.
 
-# Contents
+This contains code to 
 
-* Leaderboard.Rmd: rmarkdown after compiling results, copy to public repo when done
-* private/: hold out data labels and team manifest.
-* R/: code
+* create project structures to run such a competition
+* collect submission from github
+* score submissions
+* and maintain a leaderboard (that uses github pages).
 
-# Use
-
-From the Hackathon working directory, run
-
-```r
-source('drake/drake-plan.R')
-make(plan, prework = 'devtools::load_all()')
-```
-
-This sets up a drake workflow to poll all repos in 
-`private/MANIFEST.csv`, score them, write Leaderboard.html,
-and copy to the parent repo.
-
-# Todo
-
-  * Track project-specific using a yaml or otherwise configuration file rather than global variables in drake-plan.R.
-  * Add a function to initialize a Hackathon private directory, copying down the drake workflow.
+Variants of this code have been used several times by the author run such competitions.  See the very WIP vignette.
 
 # Colophone
 

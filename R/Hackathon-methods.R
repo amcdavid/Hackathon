@@ -17,11 +17,23 @@ create_directory = function(path){
 #' @examples
 #' h = setup_hack('.', 'Example', 'Test')
 #' h
-setup_hack = function(parent_path = '.', name, desc){
+setup_hack = function(parent_path = '.', name, 
+                      private_name = glue::glue("{name}-private"), 
+                      public_name = glue::glue("{name}-public"),
+                      desc){
   hack_root = file.path(parent_path, name)
-  yaml::write_yaml(list(name = name, desc = desc, path = hack_root), file.path(hack_root, 'competition.yml'))
-  create_directory(file.path(hack_root, 'private'))
+  create_directory(hack_root)
+  yaml::write_yaml(list(name = name, private_name = private_name, public_name = public_name, desc = desc, path = hack_root), file.path(hack_root, 'competition.yml'))
+  create_directory(file.path(hack_root, private_name))
+  create_directory(file.path(hack_root, public_name))
   # interpolate and copy markdown
+  
+  if(!file.exists(file.path(hack_root, private_name, '.git'))){
+    message("Run usethis::use_github() on ", file.path(hack_root, private_name), " if you want to use github to track private artefacts (but make sure the repo is set to private...)")
+  }
+  if(!file.exists(file.path(hack_root, private_name, '.git'))){
+    message("Run usethis::use_github() on ", file.path(hack_root, public_name), " if you want to use github to share the hackathon.")
+  }
   load_hack(hack_root)
 }
 
