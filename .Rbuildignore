@@ -1,7 +1,2 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-README*
-.drake/
-Leaderboard.*
-private/
-drake/

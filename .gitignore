@@ -2,10 +2,3 @@
 .Rhistory
 .RData
 .Ruserdata
-.drake
-.Renviron*
-*.Rproj
-private/MANIFEST.csv
-Leaderboard.html
-Leaderboard.md
-inst/doc
